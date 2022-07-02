@@ -192,11 +192,11 @@ class BLAKE2(object):
             vb = v[b]
             vc = v[c]
             vd = v[d]
-            
-            self.blocks_data[self.block_counter].rs[r].gs[gn].g_init_values[0] = va
-            self.blocks_data[self.block_counter].rs[r].gs[gn].g_init_values[1] = vb
-            self.blocks_data[self.block_counter].rs[r].gs[gn].g_init_values[2] = vc
-            self.blocks_data[self.block_counter].rs[r].gs[gn].g_init_values[3] = vd
+            if self.debug == False:
+                self.blocks_data[self.block_counter].rs[r].gs[gn].g_init_values[0] = va
+                self.blocks_data[self.block_counter].rs[r].gs[gn].g_init_values[1] = vb
+                self.blocks_data[self.block_counter].rs[r].gs[gn].g_init_values[2] = vc
+                self.blocks_data[self.block_counter].rs[r].gs[gn].g_init_values[3] = vd
 
             va = (va + vb + msri2)              & MASKBITS
             w = vd ^ va
@@ -206,10 +206,11 @@ class BLAKE2(object):
             vb = (w >> ROT2) | (w << (WB_ROT2)) & MASKBITS
 
            
-            self.blocks_data[self.block_counter].rs[r].gs[gn].g_mid_values[0] = va
-            self.blocks_data[self.block_counter].rs[r].gs[gn].g_mid_values[3] = vd
-            self.blocks_data[self.block_counter].rs[r].gs[gn].g_mid_values[2] = vc
-            self.blocks_data[self.block_counter].rs[r].gs[gn].g_mid_values[1] = vb
+            if self.debug == False:
+                self.blocks_data[self.block_counter].rs[r].gs[gn].g_mid_values[0] = va
+                self.blocks_data[self.block_counter].rs[r].gs[gn].g_mid_values[3] = vd
+                self.blocks_data[self.block_counter].rs[r].gs[gn].g_mid_values[2] = vc
+                self.blocks_data[self.block_counter].rs[r].gs[gn].g_mid_values[1] = vb
 
             va = (va + vb + msri21)             & MASKBITS
             w = vd ^ va
@@ -223,24 +224,26 @@ class BLAKE2(object):
             v[c] = vc
             v[d] = vd
 
-            self.blocks_data[self.block_counter].rs[r].gs[gn].m[0] = msri2          
-            self.blocks_data[self.block_counter].rs[r].gs[gn].m[1] = msri21          
-            self.blocks_data[self.block_counter].rs[r].gs[gn].g_final_values[0] = va          
-            self.blocks_data[self.block_counter].rs[r].gs[gn].g_final_values[1] = vb
-            self.blocks_data[self.block_counter].rs[r].gs[gn].g_final_values[2] = vc
-            self.blocks_data[self.block_counter].rs[r].gs[gn].g_final_values[3] = vd
-            
+            if self.debug == False:
+                self.blocks_data[self.block_counter].rs[r].gs[gn].m[0] = msri2          
+                self.blocks_data[self.block_counter].rs[r].gs[gn].m[1] = msri21          
+                self.blocks_data[self.block_counter].rs[r].gs[gn].g_final_values[0] = va          
+                self.blocks_data[self.block_counter].rs[r].gs[gn].g_final_values[1] = vb
+                self.blocks_data[self.block_counter].rs[r].gs[gn].g_final_values[2] = vc
+                self.blocks_data[self.block_counter].rs[r].gs[gn].g_final_values[3] = vd
+                
         # time to ChaCha
         for r in range(self.ROUNDS):
             # resolve as much as possible outside G() and 
             # don't pass as argument, let scope do its job.  
             # Result is a 50% speed increase, but sadly, 
             # "slow" divided by 1.5 is still "slow".  :-/
-            cont = 0
-            for gn in range(8):
-                self.blocks_data[self.block_counter].rs[r].gs[gn].m_pos[0] = cont    
-                self.blocks_data[self.block_counter].rs[r].gs[gn].m_pos[1] = cont + 1
-                cont = cont + 2
+            if self.debug == False:
+                cont = 0
+                for gn in range(8):
+                    self.blocks_data[self.block_counter].rs[r].gs[gn].m_pos[0] = cont    
+                    self.blocks_data[self.block_counter].rs[r].gs[gn].m_pos[1] = cont + 1
+                    cont = cont + 2
 
             sr = sigma[r]
             msri2  = m[sr[0]]
@@ -268,10 +271,11 @@ class BLAKE2(object):
             msri21 = m[sr[15]]
             G( 3,  4,  9, 14, 7)
 
-        self.v_fin.append(v)
         self.h = [self.h[i] ^ v[i] ^ v[i+8] for i in range(8)]
-        self.hs.append(self.h)
-        self.block_counter = self.block_counter + 1
+        if self.debug == False:
+            self.v_fin.append(v)
+            self.hs.append(self.h)
+            self.block_counter = self.block_counter + 1
 
     # - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
@@ -378,7 +382,7 @@ class BLAKE2b(BLAKE2):
     def __init__(self, data=b'', digest_size=64, key=b'', 
                        salt=b'', person=b'', fanout=1, depth=1, 
                        leaf_size=0, node_offset=0, node_depth=0, 
-                       inner_size=0, last_node=False, blocks_data=NONE, vs = NONE): #rounds data es donde se guardan los pasos intermedios
+                       inner_size=0, last_node=False, blocks_data=NONE, vs = [], debug = False): #rounds data es donde se guardan los pasos intermedios
 
         assert 1 <= digest_size <= self.OUTBYTES
         assert len(key)         <= self.KEYBYTES
@@ -427,6 +431,7 @@ class BLAKE2b(BLAKE2):
         self.h_init = None
         self.hs = []
         self.N_BLOCKS = 0
+        self.debug = debug
 
 
 

@@ -11,9 +11,9 @@ import binascii
 class b2_block:
     
     def __init__(self):
-       self.rs = [b2_r.b2_round() for x in range(cons.n_rounds)] 
-       self.v_fin = [0]*16
-
+        self.rs = [b2_r.b2_round() for x in range(cons.n_rounds)] 
+        self.v_fin = [0]*16
+    
 def previous_block(self):
     if self.actual_block > 1:
         self.actual_round = 1
@@ -34,7 +34,8 @@ def previous_block(self):
             self.hs_label.config(text="hash final:")
         else:
             self.hs_label.config(text="hash al finalizar el bloque actual:")
-        b2_int.update_sigma_window(self, n_round = 1, mi = self.actual_block_rounds[self.actual_round].gs[0].m_pos[0], mj = self.actual_block_rounds[0].gs[0].m_pos[1])
+        b2_int.update_sigma_window(self, mi = self.actual_block_rounds[self.actual_round - 1].gs[0].m_pos[0], mj = self.actual_block_rounds[0].gs[0].m_pos[1])
+        b2_int.update_sigma_color(self, mi = self.actual_block_rounds[self.actual_round - 1].gs[0].m_pos[0], mj = self.actual_block_rounds[0].gs[0].m_pos[1])
 
         load_hs(self, hs = self.actual_hs, n_block = self.actual_block)
         self.actual_g = 0
@@ -64,7 +65,8 @@ def next_block(self):
             self.hs_label.config(text="hash final:")
         else:
             self.hs_label.config(text="hash al finalizar el bloque actual:")
-        b2_int.update_sigma_window(self, n_round = 1, mi = self.actual_block_rounds[self.actual_round].gs[0].m_pos[0], mj = self.actual_block_rounds[0].gs[0].m_pos[1])
+        b2_int.update_sigma_window(self, mi = self.actual_block_rounds[self.actual_round - 1].gs[0].m_pos[0], mj = self.actual_block_rounds[0].gs[0].m_pos[1])
+        b2_int.update_sigma_color(self, mi = self.actual_block_rounds[self.actual_round - 1].gs[0].m_pos[0], mj = self.actual_block_rounds[0].gs[0].m_pos[1])
 
         load_hs(self, hs = self.actual_hs, n_block = self.actual_block)
         self.hs_frame.pack()
@@ -95,11 +97,11 @@ def load_hs(self, hs, n_block):
     total_rows = len(hs)
     self.entry_grid_hs = [0 for x in range(total_rows)]
     for i in range(total_rows):
-        self.e = tk.Entry(self.hs_frame, justify=tk.CENTER, width=3, font=('Arial',11,'bold'))
+        self.e = tk.Entry(self.hs_frame, justify=tk.CENTER, width=3, font=('Consolas',11,'bold'))
         self.e.grid(row=i, column = 0)
         self.e.insert(tk.END, "h"+ str(i))
         self.e.config( state="readonly")
-        self.e = tk.Entry(self.hs_frame, justify=tk.CENTER, width=20, font=('Arial',11,'bold'))
+        self.e = tk.Entry(self.hs_frame, justify=tk.CENTER, width=20, font=('Consolas',11,'bold'))
         ttp_format(self, hs, self.b2.v_fin[n_block - 1], x = i)
 
         self.e.grid(row=i, column = 1)

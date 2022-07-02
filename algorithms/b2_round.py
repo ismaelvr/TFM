@@ -41,14 +41,14 @@ def load_round(self, rounds, n_round):
     self.round_val_str.set("Ronda: " + str(self.actual_round) + "/" +str(cons.n_rounds))
 
     b2_int.update_internal_state_window(self, ng = self.actual_g)
-    b2_int.update_sigma_window(self, n_round = self.actual_round, mi = self.actual_block_rounds[n_round - 1].gs[self.actual_g].m_pos[0], mj = self.actual_block_rounds[n_round - 1].gs[self.actual_g].m_pos[1])
+    b2_int.update_sigma_color(self, mi = self.actual_block_rounds[n_round - 1].gs[self.actual_g].m_pos[0], mj = self.actual_block_rounds[n_round - 1].gs[self.actual_g].m_pos[1])
     total_rows = len(rounds[n_round - 1].gs)
     total_columns = len(rounds[n_round - 1].gs[0].g_final_values)
     self.entry_grid_round_gs = [[rounds[n_round - 1].gs[x].g_final_values[y] for x in range(total_rows)] for y in range(total_columns)]
     for i in range(total_rows):
             for j in range(total_columns):
                 if i == 0:
-                    self.e = tk.Entry(self.rounds_frame, justify=tk.CENTER, width=20, font=('Arial',11,'bold'))
+                    self.e = tk.Entry(self.rounds_frame, justify=tk.CENTER, width=20, font=('Consolas',11,'bold'))
                     self.e.grid(row=i, column=j+1)
                     if j == 0:
                         self.e.insert(tk.END, "a")
@@ -61,12 +61,12 @@ def load_round(self, rounds, n_round):
                     self.e.config( state="readonly")
 
                 if j == 0:
-                    self.e = tk.Entry(self.rounds_frame, justify=tk.CENTER, width=3, font=('Arial',11,'bold'))
+                    self.e = tk.Entry(self.rounds_frame, justify=tk.CENTER, width=3, font=('Consolas',11,'bold'))
                     self.e.grid(row=i+1, column=j)
                     self.e.insert(tk.END, "G"+str(i))
                     self.e.config( state="readonly")
 
-                self.e = tk.Entry(self.rounds_frame, justify=tk.CENTER, width=20, font=('Arial',11,'bold'))
+                self.e = tk.Entry(self.rounds_frame, justify=tk.CENTER, width=20, font=('Consolas',11,'bold'))
                 self.e.grid(row=i+1, column=j+1)
                 self.e.insert(tk.END, rounds[n_round - 1].gs[i].g_final_values[j])
                 self.entry_grid_round_gs[j][i] = self.e
